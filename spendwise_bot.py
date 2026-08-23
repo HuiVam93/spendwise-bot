@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sqlite3
 import html
+import os
 from datetime import datetime
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
@@ -10,7 +11,7 @@ from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
 # ==================== НАСТРОЙКИ ====================
-BOT_TOKEN = "8684510280:AAFXOEAJCVXuh8wRWQ7gFSKFfFV1tS50dF0"
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8684510280:AAFXOEAJCVXuh8wRWQ7gFSKFfFV1tS50dF0")
 
 # ==================== БАЗА ДАННЫХ ====================
 DB_NAME = "spendwise.db"
