@@ -9,6 +9,7 @@ from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
+from aiogram.types import WebAppInfo
 
 # ==================== НАСТРОЙКИ ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8684510280:AAFXOEAJCVXuh8wRWQ7gFSKFfFV1tS50dF0")
@@ -75,8 +76,11 @@ def make_progress_bar(spent, budget, length=10):
     return block * filled + "⬜" * empty
 
 # ==================== КЛАВИАТУРЫ ====================
+WEBAPP_URL = "https://HuiVam93.github.io/spendwise-bot/webapp/index.html"
+
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
+        [KeyboardButton(text="📱 Открыть приложение", web_app=WebAppInfo(url=WEBAPP_URL))],
         [KeyboardButton(text="📊 Мои конверты"), KeyboardButton(text="➕ Добавить трату")],
         [KeyboardButton(text="🆕 Новый конверт"), KeyboardButton(text="💳 Дашборд")],
         [KeyboardButton(text="↩️ Отменить трату"), KeyboardButton(text="📈 Статистика")]
