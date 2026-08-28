@@ -249,7 +249,9 @@
   <div class="header fade-in">
     <h1 id="greeting">Привет! 👋</h1>
     <p>Твой умный бюджет</p>
-  </div>
+</div>
+
+<pre id="debug" style="background:#000; color:#0f0; padding:10px; border-radius:8px; font-size:11px; overflow-x:auto; margin-bottom:16px; white-space:pre-wrap;"></pre>
  
   <div class="balance-card fade-in" style="animation-delay: 0.1s">
     <div class="balance-label">💰 Осталось в этом месяце</div>
@@ -288,6 +290,13 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
     tg.ready();
+
+    document.getElementById('debug').textContent = JSON.stringify({
+    platform: tg.platform,
+    version: tg.version,
+    initData: tg.initData,
+    initDataUnsafe: tg.initDataUnsafe
+}, null, 2);
  
     // ═══════════════════════════════════════
     // URL твоего бэкенда на Railway
