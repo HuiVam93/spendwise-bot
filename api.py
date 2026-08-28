@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
 
-DB_NAME = "spendwise.db"
+DB_NAME = os.getenv("DB_PATH", "/app/data/spendwise.db")
 
 app = FastAPI()
 
