@@ -12,7 +12,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.types import WebAppInfo
 
 # ==================== НАСТРОЙКИ ====================
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8684510280:AAFXOEAJCVXuh8wRWQ7gFSKFfFV1tS50dF0")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8684510280:AAFfAbSAebKszpdI1S_EkTqbpu4XjwHQ88U")
 
 # ==================== БАЗА ДАННЫХ ====================
 DB_NAME = "spendwise.db"
