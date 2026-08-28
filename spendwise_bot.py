@@ -15,7 +15,7 @@ from aiogram.types import WebAppInfo
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8684510280:AAFfAbSAebKszpdI1S_EkTqbpu4XjwHQ88U")
 
 # ==================== БАЗА ДАННЫХ ====================
-DB_NAME = "spendwise.db"
+DB_NAME = os.getenv("DB_PATH", "/app/data/spendwise.db")
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
