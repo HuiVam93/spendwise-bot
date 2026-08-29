@@ -80,7 +80,6 @@ WEBAPP_URL = "https://sunny-victory-production.up.railway.app/webapp/index.html"
 
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="📱 Открыть приложение", web_app=WebAppInfo(url=WEBAPP_URL))],
         [KeyboardButton(text="📊 Мои конверты"), KeyboardButton(text="➕ Добавить трату")],
         [KeyboardButton(text="🆕 Новый конверт"), KeyboardButton(text="💳 Дашборд")],
         [KeyboardButton(text="↩️ Отменить трату"), KeyboardButton(text="📈 Статистика")]
