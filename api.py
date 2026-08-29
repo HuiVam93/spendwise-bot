@@ -4,10 +4,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
 
 DB_NAME = os.getenv("DB_PATH", "/app/data/spendwise.db")
 
 app = FastAPI()
+app.mount("/webapp", StaticFiles(directory="webapp", html=True), name="webapp")
 
 # Разрешаем запросы с GitHub Pages
 app.add_middleware(
