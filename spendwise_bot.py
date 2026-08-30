@@ -76,7 +76,7 @@ def make_progress_bar(spent, budget, length=10):
     return block * filled + "⬜" * empty
 
 # ==================== КЛАВИАТУРЫ ====================
-WEBAPP_URL = "https://sunny-victory-production.up.railway.app/webapp/index.html"
+WEBAPP_URL = "https://spendwise-bot-production.up.railway.app/webapp/index.html"
 
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
