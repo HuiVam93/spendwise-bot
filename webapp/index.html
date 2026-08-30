@@ -174,6 +174,103 @@
       transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* ---------- Chart card (shared) ---------- */
+
+    .chart-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    /* ---------- Daily bar chart ---------- */
+
+    .daily-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 120px;
+    }
+
+    .daily-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .daily-bar {
+      width: 100%;
+      max-width: 18px;
+      border-radius: 6px 6px 0 0;
+      background: linear-gradient(180deg, #B8A5E8, #9B8FD4);
+      min-height: 3px;
+      transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .daily-bar-label {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .daily-bar-wrap.is-today .daily-bar {
+      background: linear-gradient(180deg, #FFB347, #F9A825);
+    }
+
+    .daily-bar-wrap.is-today .daily-bar-label {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* ---------- Category breakdown ---------- */
+
+    .category-row {
+      margin-bottom: 16px;
+    }
+
+    .category-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .category-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .category-icon {
+      font-size: 16px;
+    }
+
+    .category-name {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .category-amount {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .category-track {
+      height: 10px;
+      background: #F2F2F7;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .category-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     /* ---------- Buttons ---------- */
 
     .btn {
@@ -229,6 +326,13 @@
     .empty-state-icon {
       font-size: 48px;
       margin-bottom: 12px;
+    }
+
+    .empty-state-small {
+      text-align: center;
+      padding: 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
     }
 
     /* ---------- Floating add button ---------- */
@@ -373,11 +477,25 @@
     </div>
   </div>
 
-  <button class="btn btn-outline fade-in" style="animation-delay: 0.35s" onclick="loadDashboard()">
+  <div class="section-title fade-in" style="animation-delay: 0.35s">🥧 По категориям</div>
+
+  <div class="chart-card fade-in" style="animation-delay: 0.4s">
+    <div id="categoryStats">
+      <div class="empty-state-small">Пока нет трат</div>
+    </div>
+  </div>
+
+  <div class="section-title fade-in" style="animation-delay: 0.4s">📊 Траты по дням</div>
+
+  <div class="chart-card fade-in" style="animation-delay: 0.45s">
+    <div id="dailyChart" class="daily-chart"></div>
+  </div>
+
+  <button class="btn btn-outline fade-in" style="animation-delay: 0.5s" onclick="loadDashboard()">
     🔄 Обновить
   </button>
 
-  <button class="btn fade-in" style="animation-delay: 0.4s" onclick="tg.close()">
+  <button class="btn fade-in" style="animation-delay: 0.55s" onclick="tg.close()">
     ✕ Закрыть приложение
   </button>
 
@@ -414,6 +532,9 @@
     // URL твоего бэкенда на Railway
     // ═══════════════════════════════════════
     const API_BASE = "https://spendwise-bot-production.up.railway.app";
+
+    // Палитра для разбивки по категориям (по кругу, если конвертов больше)
+    const CATEGORY_COLORS = ['#B8A5E8', '#8ECDDD', '#FFB4A2', '#A8E6CF', '#FFD3B4', '#C7B8EA'];
 
     const fmt = (n) => n.toLocaleString('ru-RU') + ' ₽';
 
@@ -461,52 +582,8 @@
         document.getElementById('income').textContent = fmt(data.total_budget);
         document.getElementById('spent').textContent = fmt(data.total_spent);
 
-        const container = document.getElementById('envelopes');
-        container.innerHTML = '';
-
-        if (currentEnvelopes.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">📭</div>
-              <div>У тебя пока нет конвертов</div>
-              <div style="margin-top:8px; font-size:13px;">
-                Создай через бота: 🆕 Новый конверт
-              </div>
-            </div>
-          `;
-          return;
-        }
-
-        currentEnvelopes.forEach((e, i) => {
-          let color = 'linear-gradient(90deg, #B8A5E8, #9B8FD4)';
-          let badge = '<span class="badge badge-success">OK</span>';
-
-          if (e.percent > 90) {
-            color = 'linear-gradient(90deg, #FF6B6B, #FF8E8E)';
-            badge = '<span class="badge badge-danger">⚠️</span>';
-          } else if (e.percent > 70) {
-            color = 'linear-gradient(90deg, #FFB347, #FFCC80)';
-            badge = '<span class="badge badge-warning">!</span>';
-          }
-
-          container.innerHTML += `
-            <div class="envelope-card fade-in" style="animation-delay: ${0.3 + i * 0.1}s">
-              <div class="envelope-icon">${e.icon}</div>
-              <div class="envelope-info">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <div class="envelope-name">${e.name}</div>
-                  ${badge}
-                </div>
-                <div class="envelope-meta">
-                  ${fmt(e.spent)} из ${fmt(e.budget)} · осталось ${fmt(e.remaining)}
-                </div>
-                <div class="progress-track">
-                  <div class="progress-fill" style="width: ${e.percent}%; background: ${color}"></div>
-                </div>
-              </div>
-            </div>
-          `;
-        });
+        renderEnvelopes(currentEnvelopes);
+        renderCategoryStats(currentEnvelopes);
 
       } catch (err) {
         console.error(err);
@@ -518,6 +595,128 @@
           </div>
         `;
       }
+
+      loadDailyStats();
+    }
+
+    function renderEnvelopes(envelopes) {
+      const container = document.getElementById('envelopes');
+      container.innerHTML = '';
+
+      if (envelopes.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div>У тебя пока нет конвертов</div>
+            <div style="margin-top:8px; font-size:13px;">
+              Создай через бота: 🆕 Новый конверт
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      envelopes.forEach((e, i) => {
+        let color = 'linear-gradient(90deg, #B8A5E8, #9B8FD4)';
+        let badge = '<span class="badge badge-success">OK</span>';
+
+        if (e.percent > 90) {
+          color = 'linear-gradient(90deg, #FF6B6B, #FF8E8E)';
+          badge = '<span class="badge badge-danger">⚠️</span>';
+        } else if (e.percent > 70) {
+          color = 'linear-gradient(90deg, #FFB347, #FFCC80)';
+          badge = '<span class="badge badge-warning">!</span>';
+        }
+
+        container.innerHTML += `
+          <div class="envelope-card fade-in" style="animation-delay: ${0.3 + i * 0.1}s">
+            <div class="envelope-icon">${e.icon}</div>
+            <div class="envelope-info">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="envelope-name">${e.name}</div>
+                ${badge}
+              </div>
+              <div class="envelope-meta">
+                ${fmt(e.spent)} из ${fmt(e.budget)} · осталось ${fmt(e.remaining)}
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: ${e.percent}%; background: ${color}"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderCategoryStats(envelopes) {
+      const container = document.getElementById('categoryStats');
+      const withSpending = envelopes.filter(e => e.spent > 0);
+
+      if (withSpending.length === 0) {
+        container.innerHTML = `<div class="empty-state-small">Пока нет трат</div>`;
+        return;
+      }
+
+      const totalSpent = withSpending.reduce((sum, e) => sum + e.spent, 0);
+      const sorted = [...withSpending].sort((a, b) => b.spent - a.spent);
+
+      container.innerHTML = sorted.map((e, i) => {
+        const share = Math.round((e.spent / totalSpent) * 100);
+        const color = CATEGORY_COLORS[i % CATEGORY_COLORS.length];
+
+        return `
+          <div class="category-row">
+            <div class="category-top">
+              <span class="category-icon">${e.icon}</span>
+              <span class="category-name">${e.name}</span>
+              <span class="category-amount">${fmt(e.spent)} · ${share}%</span>
+            </div>
+            <div class="category-track">
+              <div class="category-fill" style="width: ${share}%; background: ${color}"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadDailyStats() {
+      if (!userId) return;
+
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/user/${userId}/stats/daily?days=14&t=${Date.now()}`,
+          { cache: 'no-store' }
+        );
+
+        if (!res.ok) throw new Error('API error');
+        const days = await res.json();
+
+        renderDailyChart(days);
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('dailyChart').innerHTML =
+          `<div class="empty-state-small">Не удалось загрузить график</div>`;
+      }
+    }
+
+    function renderDailyChart(days) {
+      const container = document.getElementById('dailyChart');
+      const max = Math.max(...days.map(d => d.total), 1);
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      container.innerHTML = days.map(d => {
+        const heightPercent = Math.max((d.total / max) * 100, 3);
+        const dayNum = Number(d.date.slice(8, 10));
+        const isToday = d.date === todayStr ? 'is-today' : '';
+
+        return `
+          <div class="daily-bar-wrap ${isToday}" title="${fmt(d.total)}">
+            <div class="daily-bar" style="height: ${heightPercent}%"></div>
+            <div class="daily-bar-label">${dayNum}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     // ---------- Добавление траты ----------
