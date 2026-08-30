@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SpendWise</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
- 
+
   <style>
     :root {
       --primary: #B8A5E8;
@@ -18,44 +18,44 @@
       --warning: #FFB347;
       --danger: #FF6B6B;
     }
- 
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
- 
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       padding: 16px;
-      padding-bottom: 40px;
+      padding-bottom: 100px;
       min-height: 100vh;
     }
- 
+
     /* ---------- Header ---------- */
- 
+
     .header {
       text-align: center;
       margin: 20px 0 28px;
     }
- 
+
     .header h1 {
       font-size: 26px;
       font-weight: 700;
       margin-bottom: 6px;
       letter-spacing: -0.3px;
     }
- 
+
     .header p {
       color: var(--text-secondary);
       font-size: 15px;
     }
- 
+
     /* ---------- Balance card ---------- */
- 
+
     .balance-card {
       background: linear-gradient(135deg, #C4B5E0 0%, #A89BD6 100%);
       border-radius: 28px;
@@ -64,26 +64,26 @@
       margin-bottom: 20px;
       box-shadow: 0 8px 32px rgba(168, 155, 214, 0.3);
     }
- 
+
     .balance-label {
       font-size: 14px;
       opacity: 0.9;
       margin-bottom: 8px;
       font-weight: 500;
     }
- 
+
     .balance-amount {
       font-size: 40px;
       font-weight: 700;
       letter-spacing: -1px;
     }
- 
+
     .stats-row {
       display: flex;
       gap: 12px;
       margin-top: 20px;
     }
- 
+
     .stat {
       flex: 1;
       background: rgba(255, 255, 255, 0.2);
@@ -92,21 +92,21 @@
       padding: 14px;
       text-align: center;
     }
- 
+
     .stat-value {
       font-size: 18px;
       font-weight: 700;
     }
- 
+
     .stat-label {
       font-size: 12px;
       opacity: 0.9;
       margin-top: 4px;
       font-weight: 500;
     }
- 
+
     /* ---------- Section title ---------- */
- 
+
     .section-title {
       font-size: 20px;
       font-weight: 700;
@@ -115,9 +115,9 @@
       align-items: center;
       gap: 8px;
     }
- 
+
     /* ---------- Envelope cards ---------- */
- 
+
     .envelope-card {
       background: var(--card);
       border-radius: 24px;
@@ -129,11 +129,11 @@
       gap: 16px;
       transition: transform 0.2s;
     }
- 
+
     .envelope-card:active {
       transform: scale(0.98);
     }
- 
+
     .envelope-icon {
       font-size: 36px;
       width: 48px;
@@ -144,38 +144,38 @@
       background: #F8F6FF;
       border-radius: 16px;
     }
- 
+
     .envelope-info {
       flex: 1;
     }
- 
+
     .envelope-name {
       font-weight: 600;
       font-size: 16px;
       margin-bottom: 4px;
     }
- 
+
     .envelope-meta {
       font-size: 13px;
       color: var(--text-secondary);
       margin-bottom: 10px;
     }
- 
+
     .progress-track {
       height: 8px;
       background: #F2F2F7;
       border-radius: 4px;
       overflow: hidden;
     }
- 
+
     .progress-fill {
       height: 100%;
       border-radius: 4px;
       transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
- 
+
     /* ---------- Buttons ---------- */
- 
+
     .btn {
       width: 100%;
       padding: 18px;
@@ -190,21 +190,21 @@
       box-shadow: 0 4px 16px rgba(168, 155, 214, 0.3);
       transition: transform 0.2s, box-shadow 0.2s;
     }
- 
+
     .btn:active {
       transform: scale(0.97);
       box-shadow: 0 2px 8px rgba(168, 155, 214, 0.2);
     }
- 
+
     .btn-outline {
       background: white;
       color: var(--primary-dark);
       border: 2px solid #E8E0F5;
       box-shadow: none;
     }
- 
+
     /* ---------- Badges ---------- */
- 
+
     .badge {
       display: inline-block;
       padding: 4px 10px;
@@ -213,49 +213,145 @@
       font-weight: 600;
       margin-left: auto;
     }
- 
+
     .badge-success { background: #E8F5E9; color: var(--success); }
     .badge-warning { background: #FFF3E0; color: #F9A825; }
     .badge-danger  { background: #FFEBEE; color: var(--danger); }
- 
+
     /* ---------- Empty / error state ---------- */
- 
+
     .empty-state {
       text-align: center;
       padding: 40px 20px;
       color: var(--text-secondary);
     }
- 
+
     .empty-state-icon {
       font-size: 48px;
       margin-bottom: 12px;
     }
- 
+
+    /* ---------- Floating add button ---------- */
+
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #C4B5E0 0%, #A89BD6 100%);
+      color: white;
+      font-size: 30px;
+      line-height: 1;
+      box-shadow: 0 8px 24px rgba(168, 155, 214, 0.45);
+      cursor: pointer;
+      z-index: 200;
+    }
+
+    .fab:active {
+      transform: scale(0.94);
+    }
+
+    /* ---------- Modal ---------- */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 45, 58, 0.45);
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 300;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--card);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 20px 32px;
+      animation: slideUp 0.25s ease forwards;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-card h3 {
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin: 14px 0 6px;
+      display: block;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid #F0EBFA;
+      background: #FBFAFF;
+      font-size: 16px;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    select.field-input {
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .modal-actions .btn {
+      margin-top: 0;
+    }
+
     /* ---------- Animation ---------- */
- 
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
- 
+
     .fade-in {
       animation: fadeIn 0.5s ease forwards;
     }
   </style>
 </head>
- 
+
 <body>
- 
+
   <div class="header fade-in">
     <h1 id="greeting">Привет! 👋</h1>
     <p>Твой умный бюджет</p>
-</div>
+  </div>
 
- 
   <div class="balance-card fade-in" style="animation-delay: 0.1s">
     <div class="balance-label">💰 Осталось в этом месяце</div>
     <div class="balance-amount" id="balance">0 ₽</div>
- 
+
     <div class="stats-row">
       <div class="stat">
         <div class="stat-value" id="income">0 ₽</div>
@@ -267,41 +363,63 @@
       </div>
     </div>
   </div>
- 
+
   <div class="section-title fade-in" style="animation-delay: 0.2s">📂 Мои конверты</div>
- 
+
   <div id="envelopes" class="fade-in" style="animation-delay: 0.3s">
     <div class="empty-state">
       <div class="empty-state-icon">📭</div>
       <div>Загрузка данных...</div>
     </div>
   </div>
- 
+
   <button class="btn btn-outline fade-in" style="animation-delay: 0.35s" onclick="loadDashboard()">
     🔄 Обновить
   </button>
- 
+
   <button class="btn fade-in" style="animation-delay: 0.4s" onclick="tg.close()">
     ✕ Закрыть приложение
   </button>
- 
+
+  <!-- Плавающая кнопка добавления траты -->
+  <button class="fab" onclick="openAddExpense()">+</button>
+
+  <!-- Модальное окно добавления траты -->
+  <div id="expenseModal" class="modal-overlay" onclick="closeOnOverlay(event)">
+    <div class="modal-card">
+      <h3>➕ Добавить трату</h3>
+
+      <span class="field-label">Конверт</span>
+      <select id="expenseEnvelope" class="field-input"></select>
+
+      <span class="field-label">Сумма, ₽</span>
+      <input type="number" id="expenseAmount" class="field-input" placeholder="Например, 500" inputmode="numeric">
+
+      <span class="field-label">Комментарий (необязательно)</span>
+      <input type="text" id="expenseNote" class="field-input" placeholder="Кафе с друзьями">
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeAddExpense()">Отмена</button>
+        <button class="btn" onclick="submitExpense()">Добавить</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
     tg.ready();
- 
+
     // ═══════════════════════════════════════
     // URL твоего бэкенда на Railway
     // ═══════════════════════════════════════
     const API_BASE = "https://spendwise-bot-production.up.railway.app";
- 
+
     const fmt = (n) => n.toLocaleString('ru-RU') + ' ₽';
- 
-    // userId заполняется как только Telegram передаст данные пользователя.
-    // На некоторых клиентах (например, Desktop) это происходит не мгновенно,
-    // поэтому если с первого раза userId нет — пробуем ещё раз чуть позже.
+
     let userId = tg.initDataUnsafe?.user?.id;
- 
+    let currentEnvelopes = [];
+
     function updateGreeting() {
       const user = tg.initDataUnsafe?.user;
       if (user) {
@@ -309,7 +427,7 @@
           `Привет, ${user.first_name || 'друг'}! 👋`;
       }
     }
- 
+
     function showUserNotFound() {
       document.getElementById('envelopes').innerHTML = `
         <div class="empty-state">
@@ -321,30 +439,32 @@
         </div>
       `;
     }
- 
+
     async function loadDashboard() {
       if (!userId) {
         showUserNotFound();
         return;
       }
- 
+
       try {
         const res = await fetch(
           `${API_BASE}/api/user/${userId}/dashboard?t=${Date.now()}`,
           { cache: 'no-store' }
         );
- 
+
         if (!res.ok) throw new Error('API error');
         const data = await res.json();
- 
+
+        currentEnvelopes = data.envelopes || [];
+
         document.getElementById('balance').textContent = fmt(data.remaining);
         document.getElementById('income').textContent = fmt(data.total_budget);
         document.getElementById('spent').textContent = fmt(data.total_spent);
- 
+
         const container = document.getElementById('envelopes');
         container.innerHTML = '';
- 
-        if (!data.envelopes || data.envelopes.length === 0) {
+
+        if (currentEnvelopes.length === 0) {
           container.innerHTML = `
             <div class="empty-state">
               <div class="empty-state-icon">📭</div>
@@ -356,11 +476,11 @@
           `;
           return;
         }
- 
-        data.envelopes.forEach((e, i) => {
+
+        currentEnvelopes.forEach((e, i) => {
           let color = 'linear-gradient(90deg, #B8A5E8, #9B8FD4)';
           let badge = '<span class="badge badge-success">OK</span>';
- 
+
           if (e.percent > 90) {
             color = 'linear-gradient(90deg, #FF6B6B, #FF8E8E)';
             badge = '<span class="badge badge-danger">⚠️</span>';
@@ -368,7 +488,7 @@
             color = 'linear-gradient(90deg, #FFB347, #FFCC80)';
             badge = '<span class="badge badge-warning">!</span>';
           }
- 
+
           container.innerHTML += `
             <div class="envelope-card fade-in" style="animation-delay: ${0.3 + i * 0.1}s">
               <div class="envelope-icon">${e.icon}</div>
@@ -387,7 +507,7 @@
             </div>
           `;
         });
- 
+
       } catch (err) {
         console.error(err);
         document.getElementById('envelopes').innerHTML = `
@@ -399,22 +519,90 @@
         `;
       }
     }
- 
+
+    // ---------- Добавление траты ----------
+
+    function openAddExpense() {
+      if (currentEnvelopes.length === 0) {
+        tg.showAlert
+          ? tg.showAlert('Сначала создай конверт через бота: 🆕 Новый конверт')
+          : alert('Сначала создай конверт через бота: 🆕 Новый конверт');
+        return;
+      }
+
+      const select = document.getElementById('expenseEnvelope');
+      select.innerHTML = currentEnvelopes
+        .map(e => `<option value="${e.id}">${e.icon} ${e.name}</option>`)
+        .join('');
+
+      document.getElementById('expenseAmount').value = '';
+      document.getElementById('expenseNote').value = '';
+      document.getElementById('expenseModal').classList.add('open');
+    }
+
+    function closeAddExpense() {
+      document.getElementById('expenseModal').classList.remove('open');
+    }
+
+    function closeOnOverlay(event) {
+      if (event.target.id === 'expenseModal') {
+        closeAddExpense();
+      }
+    }
+
+    async function submitExpense() {
+      const envelopeId = document.getElementById('expenseEnvelope').value;
+      const amountRaw = document.getElementById('expenseAmount').value;
+      const note = document.getElementById('expenseNote').value.trim();
+      const amount = parseInt(amountRaw, 10);
+
+      if (!amount || amount <= 0) {
+        tg.showAlert
+          ? tg.showAlert('Введи сумму больше нуля')
+          : alert('Введи сумму больше нуля');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/user/${userId}/transaction`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            envelope_id: Number(envelopeId),
+            amount: amount,
+            note: note
+          })
+        });
+
+        if (!res.ok) throw new Error('API error');
+
+        closeAddExpense();
+        loadDashboard();
+
+        if (tg.HapticFeedback) {
+          tg.HapticFeedback.notificationOccurred('success');
+        }
+      } catch (err) {
+        console.error(err);
+        tg.showAlert
+          ? tg.showAlert('Не удалось сохранить трату, попробуй ещё раз')
+          : alert('Не удалось сохранить трату, попробуй ещё раз');
+      }
+    }
+
     // ---------- Запуск ----------
- 
+
     if (userId) {
       updateGreeting();
       loadDashboard();
     } else {
-      // Даём Telegram немного времени передать данные пользователя
       setTimeout(() => {
         userId = tg.initDataUnsafe?.user?.id;
         updateGreeting();
         loadDashboard();
       }, 300);
     }
- 
-    // Перезагружаем данные каждый раз, когда приложение снова становится видимым
+
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         loadDashboard();
