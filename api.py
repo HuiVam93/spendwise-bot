@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from fastapi import HTTPException
 
 DB_NAME = os.getenv("DB_PATH", "/app/data/spendwise.db")
@@ -70,6 +70,35 @@ async def add_transaction(user_id: int, payload: TransactionIn):
     conn.close()
 
     return {"status": "ok"}
+
+class DailyStat(BaseModel):
+    date: str
+    total: int
+
+
+@app.get("/api/user/{user_id}/stats/daily", response_model=List[DailyStat])
+async def get_daily_stats(user_id: int, days: int = 14):
+    conn = get_conn()
+    c = conn.cursor()
+
+    c.execute('''
+        SELECT DATE(t.created_at) as day, SUM(t.amount)
+        FROM transactions t
+        JOIN envelopes e ON t.envelope_id = e.id
+        WHERE e.user_id = ? AND DATE(t.created_at) >= DATE('now', ?)
+        GROUP BY day
+    ''', (user_id, f'-{days - 1} days'))
+
+    rows = dict(c.fetchall())
+    conn.close()
+
+    today = date.today()
+    result = []
+    for i in range(days - 1, -1, -1):
+        d_str = (today - timedelta(days=i)).isoformat()
+        result.append({"date": d_str, "total": rows.get(d_str, 0)})
+
+    return result
 
 @app.get("/api/user/{user_id}/dashboard", response_model=DashboardOut)
 async def get_dashboard(user_id: int):
