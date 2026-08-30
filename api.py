@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+from datetime import datetime
+from fastapi import HTTPException
 
 DB_NAME = os.getenv("DB_PATH", "/app/data/spendwise.db")
 
@@ -39,6 +41,35 @@ class DashboardOut(BaseModel):
     envelopes_count: int
     transactions_count: int
     envelopes: List[EnvelopeOut]
+
+class TransactionIn(BaseModel):
+    envelope_id: int
+    amount: int
+    note: str = ""
+
+
+@app.post("/api/user/{user_id}/transaction")
+async def add_transaction(user_id: int, payload: TransactionIn):
+    conn = get_conn()
+    c = conn.cursor()
+
+    c.execute("SELECT id FROM envelopes WHERE id = ? AND user_id = ?", (payload.envelope_id, user_id))
+    if not c.fetchone():
+        conn.close()
+        raise HTTPException(status_code=404, detail="Envelope not found")
+
+    if payload.amount <= 0:
+        conn.close()
+        raise HTTPException(status_code=400, detail="Amount must be positive")
+
+    c.execute(
+        "INSERT INTO transactions (envelope_id, amount, note, created_at) VALUES (?, ?, ?, ?)",
+        (payload.envelope_id, payload.amount, payload.note, datetime.now().isoformat())
+    )
+    conn.commit()
+    conn.close()
+
+    return {"status": "ok"}
 
 @app.get("/api/user/{user_id}/dashboard", response_model=DashboardOut)
 async def get_dashboard(user_id: int):
